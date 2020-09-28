@@ -6,6 +6,7 @@
 #
 # Must be run beforehand
 
+import os
 import csv
 from rdkit import Chem
 from itertools import islice
@@ -53,8 +54,9 @@ FUNC_SMARTS = [
     r'[CX3](=[OX1])[F,Cl,Br,I]',  # Acyl Halide
     r'[OD2]([#6])[#6]',  # Ether^b
     r'[$([NX3](=O)=O),$([NX3+](=O)[O-])][!#8]',  # nitro^b
-    r'[CH3X4]',  # Methyl^b
-    r'[CX4;H0,H1,H2]',  # Alkane^b
+    # These are subgroups of Alkane^a
+    # r'[CH3X4]',  # Methyl^b
+    # r'[CX4;H0,H1,H2]',  # Alkane^b
 ]
 
 # Convert all the functional smart string to rdkit molecule classes and pair with
@@ -63,7 +65,7 @@ FUNC_SMARTS_MOL_TUP = list(
     zip(FUNC_SMARTS, map(Chem.MolFromSmarts, FUNC_SMARTS)))
 
 
-def create_cas_functional(filename='CAS_func.csv'):
+def create_cas_functional(filename=os.path.join('data', 'CAS_func.csv')):
     """
     Creates a new csv file contain information about whether a molecule contains
     the functional groups presented in the paper. Each molecule is identified
@@ -75,7 +77,7 @@ def create_cas_functional(filename='CAS_func.csv'):
             it in the current directory with a name of 'filename'.
     """
 
-    with open('inchi.txt', 'r', newline='') as inchi_file, open(filename, 'w', newline='') as CAS_func:
+    with open(os.path.join('data', 'inchi.txt'), 'r', newline='') as inchi_file, open(filename, 'w', newline='') as CAS_func:
 
         # Converts each line into dictionary with top values as keys
         inchi_reader = csv.DictReader(inchi_file, delimiter='\t')
