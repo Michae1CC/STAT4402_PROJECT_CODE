@@ -47,7 +47,7 @@ def extract_transmittance(jdx_file_path):
     return CAS_ID, jcamp_dict['x'], jcamp_dict['y']
 
 
-def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test')):
+def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bin=4500):
     """
     Get all the IR transmittance values from the samples within a folder
     containing jdx files.
@@ -68,7 +68,11 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test')):
         }
     """
 
-    transmittance_dict = {}
+    # transmittance_dict = {}
+
+    x_bins = np.arange(0, x_max_bin, 50)
+    main_df = pd.DataFrame({'x': pd.cut(np.arange(1, 499, 4500), x_bins)})
+    main_df.set_index('x', inplace=True)
 
     for root, dirs, files in os.walk(IR_path_name):
         for name in files:
@@ -81,9 +85,16 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test')):
                 # Get the x,y and transmittance values
                 cas_id, x, y = extract_transmittance(jdx_file_path)
 
-                transmittance_dict[cas_id] = {'x': x, 'y': y}
+                # transmittance_dict[cas_id] = {'x': x, 'y': y}
 
-    return transmittance_dict
+                single_df = pd.DataFrame({'x': x, cas_id: y})
+                single_df['x'] = pd.cut(single_df['x'], x_bins)
+                single_df = single_df.groupby('x').aggregate(np.mean).fillna(0)
+                single_df.interpolate(limit_direction='both', axis=0)
+
+                main_df = main_df.merge(single_df, on='x', how='outer')
+
+    return main_df
 
 
 def get_transmittance():
