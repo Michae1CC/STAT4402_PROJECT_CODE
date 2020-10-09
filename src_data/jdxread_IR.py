@@ -166,9 +166,12 @@ def get_absorbance():
 def pickle_transmittance_values():
 
     IR_path_name = os.path.join('data', 'ir_test')
-    transmittance_dict = get_all_transmittance(IR_path_name=IR_path_name)
+    transmittance_df = get_all_transmittance(IR_path_name=IR_path_name)
 
-    pprint(transmittance_dict)
+    pprint(transmittance_df)
+
+    IR_save_path = os.path.join('data', 'IR_bins.csv')
+    transmittance_df.to_csv(IR_save_path)
 
 
 def main():

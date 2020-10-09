@@ -86,7 +86,7 @@ def create_cas_functional(save_path, inchi_path=os.path.join('data', 'CAS_func.c
 
         CAS_func_writer.writeheader()
 
-        for line in inchi_reader:
+        for line in islice(inchi_reader, 5):
 
             cas_id, inchi = line['cas_id'], line['inchi']
 
@@ -124,7 +124,7 @@ def detect_func_grps(inchi):
 
 def main():
     INCHI_PATH = os.path.join('data', 'inchi.txt')
-    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC.csv')
+    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC_test.csv')
     create_cas_functional(SAVE_PATH, inchi_path=INCHI_PATH)
 
 
