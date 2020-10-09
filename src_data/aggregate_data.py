@@ -50,7 +50,7 @@ def create_aggregate(ir_data_path, ms_data_path, cas_to_func_path):
                         list(ms_single_data))
         y_labels.append(list(cas_to_func_df.loc[cas_id]))
 
-    return np.array(x_labels, dtype=float), np.array(y_labels, dtype=float)
+    return np.array(x_labels, dtype=float), np.array(y_labels, dtype=int)
 
 
 def main():

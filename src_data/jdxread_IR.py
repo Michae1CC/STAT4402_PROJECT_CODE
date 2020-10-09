@@ -82,8 +82,11 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
                 # Get the full file path to the jdx file
                 jdx_file_path = os.path.join(root, name)
 
-                # Get the x,y and transmittance values
-                cas_id, x, y = extract_transmittance(jdx_file_path)
+                try:
+                    # Get the x,y and transmittance values
+                    cas_id, x, y = extract_transmittance(jdx_file_path)
+                except Exception:
+                    continue
 
                 # transmittance_dict[cas_id] = {'x': x, 'y': y}
 
