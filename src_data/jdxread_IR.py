@@ -68,11 +68,11 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
         }
     """
 
-    # transmittance_dict = {}
+    transmittance_dict = {}
 
-    x_bins = np.arange(0, x_max_bin, 50)
-    main_df = pd.DataFrame({'x': pd.cut(np.arange(1, 499, 4500), x_bins)})
-    main_df.set_index('x', inplace=True)
+    # This is just what the paper did to get buckets
+    ls = []
+    single_dfs = []
 
     for root, dirs, files in os.walk(IR_path_name):
         for name in files:
@@ -88,11 +88,30 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
                 # transmittance_dict[cas_id] = {'x': x, 'y': y}
 
                 single_df = pd.DataFrame({'x': x, cas_id: y})
-                single_df['x'] = pd.cut(single_df['x'], x_bins)
-                single_df = single_df.groupby('x').aggregate(np.mean).fillna(0)
-                single_df.interpolate(limit_direction='both', axis=0)
+                single_df = single_df.groupby('x').aggregate(np.mean)
+                single_df.reset_index(inplace=True)
+                single_dfs.append(single_df)
 
-                main_df = main_df.merge(single_df, on='x', how='outer')
+                ls.append([np.min(np.diff(single_df['x'])), np.min(
+                    single_df['x']), np.max(single_df['x'])])
+
+    arr = np.array(ls)
+    bins = np.arange(np.min(arr[:, 1])-0.1,
+                     np.max(arr[:, 2])+0.1, np.mean(arr[:, 0]))
+
+    single_dfs[0]['x'] = pd.cut(single_dfs[0]['x'], bins)
+    main_df = single_dfs[0].groupby('x').aggregate(np.mean)
+    main_df.reset_index(inplace=True)
+
+    for single_df in single_dfs[1:]:
+        single_df['x'] = pd.cut(single_df['x'], bins)
+        single_df = single_df.groupby('x').aggregate(np.mean)
+        single_df.reset_index(inplace=True)
+
+        main_df = main_df.merge(single_df, on='x', how='outer')
+
+    main_df.iloc[:, 1:] = main_df.iloc[:, 1:].interpolate(
+        limit_direction='both', axis=0)
 
     return main_df
 
@@ -165,12 +184,12 @@ def get_absorbance():
 
 def pickle_transmittance_values():
 
-    IR_path_name = os.path.join('data', 'ir_test')
+    IR_path_name = os.path.join('data', 'ir')
     transmittance_df = get_all_transmittance(IR_path_name=IR_path_name)
 
     pprint(transmittance_df)
 
-    IR_save_path = os.path.join('data', 'IR_bins.csv')
+    IR_save_path = os.path.join('data', 'IR_bins_FINAL.csv')
     transmittance_df.to_csv(IR_save_path)
 
 
