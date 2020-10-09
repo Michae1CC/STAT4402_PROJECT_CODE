@@ -65,7 +65,7 @@ FUNC_SMARTS_MOL_TUP = list(
     zip(FUNC_SMARTS, map(Chem.MolFromSmarts, FUNC_SMARTS)))
 
 
-def create_cas_functional(filename=os.path.join('data', 'CAS_func.csv')):
+def create_cas_functional(save_path, inchi_path=os.path.join('data', 'CAS_func.csv')):
     """
     Creates a new csv file contain information about whether a molecule contains
     the functional groups presented in the paper. Each molecule is identified
@@ -77,7 +77,7 @@ def create_cas_functional(filename=os.path.join('data', 'CAS_func.csv')):
             it in the current directory with a name of 'filename'.
     """
 
-    with open(os.path.join('data', 'inchi.txt'), 'r', newline='') as inchi_file, open(filename, 'w', newline='') as CAS_func:
+    with open(inchi_path, 'r', newline='') as inchi_file, open(save_path, 'w', newline='') as CAS_func:
 
         # Converts each line into dictionary with top values as keys
         inchi_reader = csv.DictReader(inchi_file, delimiter='\t')
@@ -86,7 +86,7 @@ def create_cas_functional(filename=os.path.join('data', 'CAS_func.csv')):
 
         CAS_func_writer.writeheader()
 
-        for line in islice(inchi_reader, 5):
+        for line in inchi_reader:
 
             cas_id, inchi = line['cas_id'], line['inchi']
 
@@ -123,7 +123,9 @@ def detect_func_grps(inchi):
 
 
 def main():
-    create_cas_functional()
+    INCHI_PATH = os.path.join('data', 'inchi.txt')
+    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC.csv')
+    create_cas_functional(SAVE_PATH, inchi_path=INCHI_PATH)
 
 
 if __name__ == '__main__':

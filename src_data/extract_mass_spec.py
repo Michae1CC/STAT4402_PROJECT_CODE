@@ -27,6 +27,8 @@ def create_mass_spec_df(mass_spec_path, x_max_bin=501):
     main_df = pd.DataFrame({'x': pd.cut(np.arange(1, 499, 50), x_bins)})
     main_df.set_index('x', inplace=True)
 
+    print("extracting data...")
+
     for jdx_file in os.listdir(mass_spec_path):
 
         if not jdx_file.endswith('.jdx'):
@@ -53,7 +55,7 @@ def create_mass_spec_df(mass_spec_path, x_max_bin=501):
 
 
 def main():
-    MASS_SPEC_PATH = os.path.join('data', 'mass_test')
+    MASS_SPEC_PATH = os.path.join('data', 'mass')
     mass_spec_df = create_mass_spec_df(MASS_SPEC_PATH)
     pprint(mass_spec_df)
 

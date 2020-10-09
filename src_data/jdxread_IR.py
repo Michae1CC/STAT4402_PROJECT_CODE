@@ -83,18 +83,6 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test')):
 
                 transmittance_dict[cas_id] = {'x': x, 'y': y}
 
-                plt.plot(list(map(str, x[::10])), list(
-                    y[::-10]))
-                plt.xticks(rotation=90)
-                plt.tick_params(
-                    axis='x',          # changes apply to the x-axis
-                    which='both',      # both major and minor ticks are affected
-                    bottom=False,      # ticks along the bottom edge are off
-                    top=False,         # ticks along the top edge are off
-                    labelbottom=False)  # labels along the bottom edge are off
-                plt.title(name)
-                plt.show()
-
     return transmittance_dict
 
 
