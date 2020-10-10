@@ -1,5 +1,4 @@
 import os
-import pickle
 
 import numpy as np
 
@@ -26,6 +25,11 @@ def example_load():
     functional group is present.
     """
 
+    # NOTE: These paths may need to change, depending on where you've
+    # saved IR_MS_FUNCTIONAL_X.npy and IR_MS_FUNCTIONAL_y.npy. If you've
+    # saved both npy files in the same directory as this example.py file,
+    # just remove 'data' as a parameter to os.path.join and just use
+    # os.path.join('IR_MS_FUNCTIONAL_X.npy').
     x_data_path = os.path.join('data', 'IR_MS_FUNCTIONAL_X.npy')
     y_data_path = os.path.join('data', 'IR_MS_FUNCTIONAL_y.npy')
 
@@ -38,10 +42,10 @@ def example_load():
     print()
 
     print(IR_MS_FUNCTIONAL_X[0])
-
     print()
 
     print(IR_MS_FUNCTIONAL_y[0])
+    print()
 
 
 def main():

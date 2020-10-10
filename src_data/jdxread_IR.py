@@ -29,6 +29,10 @@ def extract_transmittance(jdx_file_path):
 
     jcamp_dict = JCAMP_reader(jdx_file_path)
 
+    # Make sure units are in centimeters
+    if jcamp_dict['xunits'].lower() == 'micrometers':
+        jcamp_dict['x'] = 10 ** (4) / jcamp_dict['x']
+
     if jcamp_dict['yunits'].lower() == 'transmittance':
         # The y values are already in transmittance form, do nothing
         pass
@@ -82,10 +86,14 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
                 # Get the full file path to the jdx file
                 jdx_file_path = os.path.join(root, name)
 
+                cas_id, x, y = extract_transmittance(jdx_file_path)
+
                 try:
                     # Get the x,y and transmittance values
                     cas_id, x, y = extract_transmittance(jdx_file_path)
-                except Exception:
+                except Exception as e:
+                    print(name, " skipped")
+                    print(e)
                     continue
 
                 # transmittance_dict[cas_id] = {'x': x, 'y': y}
@@ -187,12 +195,12 @@ def get_absorbance():
 
 def pickle_transmittance_values():
 
-    IR_path_name = os.path.join('data', 'ir')
+    IR_path_name = os.path.join('data', 'ir_test')
     transmittance_df = get_all_transmittance(IR_path_name=IR_path_name)
 
     pprint(transmittance_df)
 
-    IR_save_path = os.path.join('data', 'IR_bins_FINAL.csv')
+    IR_save_path = os.path.join('data', 'IR_bins_test.csv')
     transmittance_df.to_csv(IR_save_path)
 
 
