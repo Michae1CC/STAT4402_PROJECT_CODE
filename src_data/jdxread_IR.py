@@ -1,13 +1,8 @@
-import os
-# import matplotlib.pyplot as plt
-# import pandas as pd
 import itertools
+import os
 import pickle
-from collections import Counter
 from pprint import pprint
 
-import matplotlib.pyplot as plt
-# from scipy import stats
 import numpy as np
 import pandas as pd
 from jcamp import JCAMP_reader
@@ -86,14 +81,10 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
                 # Get the full file path to the jdx file
                 jdx_file_path = os.path.join(root, name)
 
-                cas_id, x, y = extract_transmittance(jdx_file_path)
-
                 try:
                     # Get the x,y and transmittance values
                     cas_id, x, y = extract_transmittance(jdx_file_path)
                 except Exception as e:
-                    print(name, " skipped")
-                    print(e)
                     continue
 
                 # transmittance_dict[cas_id] = {'x': x, 'y': y}
@@ -147,50 +138,6 @@ def get_transmittance():
                 # xu.append(jcamp_dict['npoints'])
                 dc[name[:-4]] = jcamp_dict
                 # ls.append(jcamp_dict['x'].shape[0])
-
-    # with open(os.path.join('.', '..', 'data', 'IR_TRANSMITTANCE.pickle'), 'wb') as handle:
-    #     pickle.dump(dc, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-def get_absorbance():
-    dc = {}
-    xu, yu = [], []
-    for root, dirs, files in os.walk(os.path.join('data', 'ir_test')):
-        for name in files:
-            # temp_dc={}
-            if name.endswith((".jdx")):
-
-                jcamp_dict = JCAMP_reader(root+'/'+name)
-
-                # NOTE: filter out data that is not transmittance
-                if jcamp_dict['yunits'].upper() != 'ABSORBANCE':
-                    continue
-
-                if name in ['50306.jdx']:
-                    print(jcamp_dict['x'])
-                    print(jcamp_dict['y'])
-
-                jcamp_dict['y'] = np.power(10, 2 - jcamp_dict['y'])/100
-
-                # xu.append(jcamp_dict['npoints'])
-                dc[name[:-4]] = jcamp_dict
-
-                if name in ['50306.jdx']:
-                    plt.plot(list(map(str, jcamp_dict['x'])), list(
-                        jcamp_dict['y'][::-1]))
-                    plt.xticks(rotation=90)
-                    plt.tick_params(
-                        axis='x',          # changes apply to the x-axis
-                        which='both',      # both major and minor ticks are affected
-                        bottom=False,      # ticks along the bottom edge are off
-                        top=False,         # ticks along the top edge are off
-                        labelbottom=False)  # labels along the bottom edge are off
-                    plt.title(name)
-                    plt.show()
-
-    # pprint(dc)
-    # with open(os.path.join('data', 'IR_ABSORBANCE.pickle'), 'wb') as handle:
-    #     pickle.dump(dc, handle, protocol=pickle.HIGHEST_PROTOCOL)
 
 
 def pickle_transmittance_values():
