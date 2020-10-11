@@ -46,27 +46,26 @@ def create_aggregate(ir_data_path, ms_data_path, cas_to_func_path):
             # move on
             continue
 
-        x_labels.append(list(ir_single_data) +
-                        list(ms_single_data))
-        y_labels.append(list(cas_to_func_df.loc[cas_id]))
+        x_labels.append(np.append(ir_single_data, ms_single_data, axis=0))
+        y_labels.append(cas_to_func_df.loc[cas_id])
 
     return np.array(x_labels, dtype=float), np.array(y_labels, dtype=int)
 
 
 def main():
 
-    ir_data_path = os.path.join('data', 'IR_bins.csv')
+    ir_data_path = os.path.join('data', 'IR_bins_test.csv')
     mass_spec_data_path = os.path.join('data', 'MASS_SPEC_DF_test.pkl')
     cas_to_func_path = os.path.join('data', 'CAS_TO_FUNC_test.csv')
 
     aggregate_npy_X, aggregate_npy_y = create_aggregate(
         ir_data_path, mass_spec_data_path, cas_to_func_path)
 
-    aggregate_csv_path_X = os.path.join('data', 'IR_MS_FUNCTIONAL_X.csv')
-    aggregate_npy_path_X = os.path.join('data', 'IR_MS_FUNCTIONAL_X.npy')
+    aggregate_csv_path_X = os.path.join('data', 'IR_MS_FUNCTIONAL_X_test.csv')
+    aggregate_npy_path_X = os.path.join('data', 'IR_MS_FUNCTIONAL_X_test.npy')
 
-    aggregate_csv_path_y = os.path.join('data', 'IR_MS_FUNCTIONAL_y.csv')
-    aggregate_npy_path_y = os.path.join('data', 'IR_MS_FUNCTIONAL_y.npy')
+    aggregate_csv_path_y = os.path.join('data', 'IR_MS_FUNCTIONAL_y_test.csv')
+    aggregate_npy_path_y = os.path.join('data', 'IR_MS_FUNCTIONAL_y_test.npy')
 
     # Save the aggregate data as both a npy and csv file
     np.savetxt(aggregate_csv_path_X, aggregate_npy_X)

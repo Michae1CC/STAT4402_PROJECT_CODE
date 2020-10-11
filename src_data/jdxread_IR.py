@@ -73,8 +73,15 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
     ls = []
     single_dfs = []
 
+    count = 1
+
     for root, dirs, files in os.walk(IR_path_name):
         for name in files:
+
+            if not count % 1000:
+                print(f"Completed: {count} files")
+
+            count += 1
 
             if name.endswith((".jdx")):
 
