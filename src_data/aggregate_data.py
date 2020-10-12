@@ -65,7 +65,7 @@ def main():
     # The project is different on getafix
     if sys.platform.startswith('win32'):
         PROJECT_DIR = os.path.join(
-            'D:', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
+            'D:\\', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
     elif sys.platform.startswith('linux'):
         PROJECT_DIR = os.path.join(
             '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
@@ -78,6 +78,9 @@ def main():
 
     aggregate_npy_X, aggregate_npy_y = create_aggregate(
         ir_data_path, mass_spec_data_path, cas_to_func_path)
+
+    print(aggregate_npy_X.shape)
+    print(aggregate_npy_y.shape)
 
     aggregate_csv_path_X = os.path.join(
         PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_test.csv')
