@@ -379,3 +379,6 @@ TSWLatexianTemp*
 
 # End of https://www.gitignore.io/api/tex,python
 data
+data.zip
+
+.vscode

@@ -1,11 +1,15 @@
 import itertools
 import os
+import sys
 import pickle
 from pprint import pprint
 
 import numpy as np
 import pandas as pd
 from jcamp import JCAMP_reader
+
+from concurrent import futures
+import concurrent.futures
 
 
 def extract_transmittance(jdx_file_path):
@@ -46,7 +50,33 @@ def extract_transmittance(jdx_file_path):
     return CAS_ID, jcamp_dict['x'], jcamp_dict['y']
 
 
-def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bin=4500):
+def thread_func(data_tuple):
+
+    bins, single_dfs = data_tuple
+
+    single_dfs[0]['x'] = pd.cut(single_dfs[0]['x'], bins)
+    main_df = single_dfs[0].groupby('x').aggregate(np.mean)
+    main_df.reset_index(inplace=True)
+
+    count = 1
+
+    for single_df in single_dfs[1:]:
+
+        count += 1
+
+        if count % 1000:
+            print("thread completed: ", count, flush=True)
+
+        single_df['x'] = pd.cut(single_df['x'], bins)
+        single_df = single_df.groupby('x').aggregate(np.mean)
+        single_df.reset_index(inplace=True)
+
+        main_df = main_df.merge(single_df, on='x', how='outer')
+
+    return main_df
+
+
+def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bin=4500, num_threads=4):
     """
     Get all the IR transmittance values from the samples within a folder
     containing jdx files.
@@ -67,7 +97,7 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
         }
     """
 
-    transmittance_dict = {}
+    # transmittance_dict = {}
 
     # This is just what the paper did to get buckets
     ls = []
@@ -108,16 +138,31 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
     bins = np.arange(np.min(arr[:, 1])-0.1,
                      np.max(arr[:, 2])+0.1, np.mean(arr[:, 0]))
 
-    single_dfs[0]['x'] = pd.cut(single_dfs[0]['x'], bins)
-    main_df = single_dfs[0].groupby('x').aggregate(np.mean)
-    main_df.reset_index(inplace=True)
+    merged_dfs = []
 
-    for single_df in single_dfs[1:]:
-        single_df['x'] = pd.cut(single_df['x'], bins)
-        single_df = single_df.groupby('x').aggregate(np.mean)
-        single_df.reset_index(inplace=True)
+    single_dfs = np.array(single_dfs, dtype=object)
+    single_dfs_partition = np.array_split(single_dfs, num_threads)
 
-        main_df = main_df.merge(single_df, on='x', how='outer')
+    del single_dfs
+    del arr
+    del ls
+
+    threads_args = [(bins, cols_to_merge)
+                    for cols_to_merge in single_dfs_partition]
+
+    merged_dfs = []
+
+    with futures.ThreadPoolExecutor(num_threads) as executor:
+        submitted_results = executor.map(thread_func, threads_args)
+
+        for merged_df in submitted_results:
+            merged_dfs.append(merged_df)
+
+    main_df = merged_dfs[0]
+
+    for merged_df in merged_dfs[1:]:
+
+        main_df = main_df.merge(merged_df, on='x', how='outer')
 
     main_df.iloc[:, 1:] = main_df.iloc[:, 1:].interpolate(
         limit_direction='both', axis=0)
@@ -149,12 +194,28 @@ def get_transmittance():
 
 def pickle_transmittance_values():
 
-    IR_path_name = os.path.join('data', 'ir_test')
-    transmittance_df = get_all_transmittance(IR_path_name=IR_path_name)
+    # The project is different on getafix
+    if sys.platform.startswith('win32'):
+        PROJECT_DIR = os.path.join(
+            'D:', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
+    elif sys.platform.startswith('linux'):
+        PROJECT_DIR = os.path.join(
+            '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
+
+    # data path on getafix
+    DATA_DIR = os.path.join('/', 'data', 's4430291', 'STAT4402_data')
+
+    if sys.platform.startswith('win32'):
+        IR_path_name = os.path.join(PROJECT_DIR, 'data', 'ir_test')
+    elif sys.platform.startswith('linux'):
+        IR_path_name = os.path.join(DATA_DIR, 'data', 'ir')
+
+    transmittance_df = get_all_transmittance(
+        IR_path_name=IR_path_name, num_threads=6)
 
     pprint(transmittance_df)
 
-    IR_save_path = os.path.join('data', 'IR_bins_test.csv')
+    IR_save_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_test.csv')
     transmittance_df.to_csv(IR_save_path)
 
 

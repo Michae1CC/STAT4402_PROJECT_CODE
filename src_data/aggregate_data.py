@@ -1,4 +1,5 @@
 import os
+import sys
 import itertools
 import pickle
 
@@ -54,18 +55,32 @@ def create_aggregate(ir_data_path, ms_data_path, cas_to_func_path):
 
 def main():
 
-    ir_data_path = os.path.join('data', 'IR_bins_test.csv')
-    mass_spec_data_path = os.path.join('data', 'MASS_SPEC_DF_test.pkl')
-    cas_to_func_path = os.path.join('data', 'CAS_TO_FUNC_test.csv')
+    # The project is different on getafix
+    if sys.platform.startswith('win32'):
+        PROJECT_DIR = os.path.join(
+            'D:', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
+    elif sys.platform.startswith('linux'):
+        PROJECT_DIR = os.path.join(
+            '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
+
+    ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_test.csv')
+    mass_spec_data_path = os.path.join(
+        PROJECT_DIR, 'data', 'MASS_SPEC_DF.pkl')
+    cas_to_func_path = os.path.join(
+        PROJECT_DIR, 'data', 'CAS_TO_FUNC.csv')
 
     aggregate_npy_X, aggregate_npy_y = create_aggregate(
         ir_data_path, mass_spec_data_path, cas_to_func_path)
 
-    aggregate_csv_path_X = os.path.join('data', 'IR_MS_FUNCTIONAL_X_test.csv')
-    aggregate_npy_path_X = os.path.join('data', 'IR_MS_FUNCTIONAL_X_test.npy')
+    aggregate_csv_path_X = os.path.join(
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_test.csv')
+    aggregate_npy_path_X = os.path.join(
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_test.npy')
 
-    aggregate_csv_path_y = os.path.join('data', 'IR_MS_FUNCTIONAL_y_test.csv')
-    aggregate_npy_path_y = os.path.join('data', 'IR_MS_FUNCTIONAL_y_test.npy')
+    aggregate_csv_path_y = os.path.join(
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_test.csv')
+    aggregate_npy_path_y = os.path.join(
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_test.npy')
 
     # Save the aggregate data as both a npy and csv file
     np.savetxt(aggregate_csv_path_X, aggregate_npy_X)

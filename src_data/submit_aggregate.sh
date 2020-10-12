@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=aggregate_chem
-#SBATCH --output=/home/s4430291/STAT4402_tut/batch_out/aggregate_chem_out.txt
-#SBATCH --error=/home/s4430291/STAT4402_tut/batch_out/aggregate_chem_err.txt
+#SBATCH --output=/home/s4430291/Courses/STAT4402/STAT4402_PROJECT_CODE/data/batch_out/aggregate_chem_out.txt
+#SBATCH --error=/home/s4430291/Courses/STAT4402/STAT4402_PROJECT_CODE/data/batch_out/aggregate_chem_err.txt
 #SBATCH --time=2-0:00
 #SBATCH --mem=10GB
 #SBATCH --nodes=1
@@ -17,7 +17,7 @@ echo "running with SLURM_TASKS_PER_NODE= $SLURM_TASKS_PER_NODE "
 echo "running with SLURM_NTASKS total  = $SLURM_NTASKS "
 export TIMEFORMAT="%E sec"
 
-python3.6 /home/s4430291/STAT4402_tut/aggregate_data.py
+python3.6 /home/s4430291/Courses/STAT4402/STAT4402_PROJECT_CODE/src_data/aggregate_data.py
 
 DATE=$(date +"%Y%m%d%H%M")
 echo "time finished "$DATE
