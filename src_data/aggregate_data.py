@@ -34,8 +34,15 @@ def create_aggregate(ir_data_path, ms_data_path, cas_to_func_path):
     x_labels = []
     y_labels = []
 
+    count = 0
+
     # Iterate through the indexes of the CAS id
     for cas_id in cas_to_func_df.index:
+
+        count += 1
+
+        if not count % 500:
+            print("Completed: ", count, flush=True)
 
         # Try and get the ir and mass spec data for this cas id
         try:
@@ -47,8 +54,8 @@ def create_aggregate(ir_data_path, ms_data_path, cas_to_func_path):
             # move on
             continue
 
-        x_labels.append(np.append(ir_single_data, ms_single_data, axis=0))
-        y_labels.append(cas_to_func_df.loc[cas_id])
+        x_labels.append(list(ir_single_data) + list(ms_single_data))
+        y_labels.append(list(cas_to_func_df.loc[cas_id]))
 
     return np.array(x_labels, dtype=float), np.array(y_labels, dtype=int)
 
@@ -63,9 +70,9 @@ def main():
         PROJECT_DIR = os.path.join(
             '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
 
-    ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_test.csv')
+    ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_FINAL.csv')
     mass_spec_data_path = os.path.join(
-        PROJECT_DIR, 'data', 'MASS_SPEC_DF.pkl')
+        PROJECT_DIR, 'data', 'MASS_SPEC_DF.csv')
     cas_to_func_path = os.path.join(
         PROJECT_DIR, 'data', 'CAS_TO_FUNC.csv')
 

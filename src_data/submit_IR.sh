@@ -2,8 +2,8 @@
 #SBATCH --job-name=IR_spec
 #SBATCH --output=/home/s4430291/Courses/STAT4402/STAT4402_PROJECT_CODE/data/batch_out/IR_spec_out.txt
 #SBATCH --error=/home/s4430291/Courses/STAT4402/STAT4402_PROJECT_CODE/data/batch_out/IR_spec_err.txt
-#SBATCH --time=3-0:00
-#SBATCH --mem=15GB
+#SBATCH --time=2-5:00
+#SBATCH --mem=50GB
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=6
 

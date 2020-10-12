@@ -64,7 +64,7 @@ def thread_func(data_tuple):
 
         count += 1
 
-        if count % 1000:
+        if not count % 1000:
             print("thread completed: ", count, flush=True)
 
         single_df['x'] = pd.cut(single_df['x'], bins)
