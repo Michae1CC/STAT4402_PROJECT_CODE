@@ -6,8 +6,8 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-ir_data_path = os.path.join('data', 'MASS_SPEC_DF.pkl')
-molecule_df = pd.read_pickle(ir_data_path)
+ir_data_path = os.path.join('data', 'MASS_SPEC_DF.csv')
+molecule_df = pd.read_csv(ir_data_path)
 
 CAS_ID = '51456'
 

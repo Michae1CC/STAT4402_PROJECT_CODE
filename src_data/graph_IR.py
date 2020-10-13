@@ -6,7 +6,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-ir_data_path = os.path.join('data', 'IR_bins_test.csv')
+ir_data_path = os.path.join('data', 'IR_bins_FINAL.csv')
 molecule_df = pd.read_csv(ir_data_path, index_col=0)
 
 CAS_ID = '116668281'
