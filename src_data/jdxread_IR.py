@@ -170,6 +170,47 @@ def get_all_transmittance(IR_path_name=os.path.join('data', 'ir_test'), x_max_bi
     return main_df
 
 
+def get_transmittance_from_template(template_path, IR_path_name=os.path.join('data', 'ir_LAB')):
+
+    main_df = pd.read_csv(template_path)
+
+    # Construct the intervals using string
+    intervals = []
+
+    for interval in main_df['x']:
+        interval = interval[1:-1]
+        lower, upper = interval.split(',')
+        lower, upper = float(lower), float(upper)
+        intervals.append(pd.Interval(lower, upper))
+
+    main_df = pd.DataFrame({'x': intervals})
+    bins = pd.IntervalIndex(intervals)
+
+    for root, dirs, files in os.walk(IR_path_name):
+        for name in files:
+
+            if name.endswith((".jdx")):
+
+                # Get the full file path to the jdx file
+                jdx_file_path = os.path.join(root, name)
+                cas_id, x, y = extract_transmittance(jdx_file_path)
+
+                single_df = pd.DataFrame({'x': x, cas_id: y})
+                single_df = single_df.groupby('x').aggregate(np.mean)
+                single_df.reset_index(inplace=True)
+
+                single_df['x'] = pd.cut(single_df['x'], bins)
+                single_df = single_df.groupby('x').aggregate(np.mean)
+                single_df.reset_index(inplace=True)
+
+                main_df = main_df.merge(single_df, on='x', how='outer')
+
+    main_df.iloc[:, 1:] = main_df.iloc[:, 1:].interpolate(
+        limit_direction='both', axis=0)
+
+    return main_df
+
+
 def get_transmittance():
     dc = {}
     xu, yu = [], []
@@ -197,7 +238,7 @@ def pickle_transmittance_values():
     # The project is different on getafix
     if sys.platform.startswith('win32'):
         PROJECT_DIR = os.path.join(
-            'D:', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
+            'D:\\', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
     elif sys.platform.startswith('linux'):
         PROJECT_DIR = os.path.join(
             '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
@@ -206,16 +247,20 @@ def pickle_transmittance_values():
     DATA_DIR = os.path.join('/', 'data', 's4430291', 'STAT4402_data')
 
     if sys.platform.startswith('win32'):
-        IR_path_name = os.path.join(PROJECT_DIR, 'data', 'ir_test')
+        IR_path_name = os.path.join(PROJECT_DIR, 'data', 'ir_LAB')
     elif sys.platform.startswith('linux'):
         IR_path_name = os.path.join(DATA_DIR, 'data', 'ir')
 
-    transmittance_df = get_all_transmittance(
-        IR_path_name=IR_path_name, num_threads=6)
+    TEMPLATE_PATH = os.path.join(PROJECT_DIR, 'data', 'IR_LAB_TEMPLATE.csv')
+
+    transmittance_df = get_transmittance_from_template(TEMPLATE_PATH)
+
+    # transmittance_df = get_all_transmittance(
+    #     IR_path_name=IR_path_name, num_threads=1)
 
     pprint(transmittance_df)
 
-    IR_save_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_test.csv')
+    IR_save_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_LAB.csv')
     transmittance_df.to_csv(IR_save_path)
 
 

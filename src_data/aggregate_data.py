@@ -70,11 +70,11 @@ def main():
         PROJECT_DIR = os.path.join(
             '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
 
-    ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_FINAL.csv')
+    ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_LAB.csv')
     mass_spec_data_path = os.path.join(
-        PROJECT_DIR, 'data', 'MASS_SPEC_DF.csv')
+        PROJECT_DIR, 'data', 'MASS_SPEC_DF_LAB.pkl')
     cas_to_func_path = os.path.join(
-        PROJECT_DIR, 'data', 'CAS_TO_FUNC.csv')
+        PROJECT_DIR, 'data', 'CAS_TO_FUNC_LAB.csv')
 
     aggregate_npy_X, aggregate_npy_y = create_aggregate(
         ir_data_path, mass_spec_data_path, cas_to_func_path)
@@ -83,20 +83,20 @@ def main():
     print(aggregate_npy_y.shape)
 
     aggregate_csv_path_X = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_test.csv')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_LAB.csv')
     aggregate_npy_path_X = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_test.npy')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_LAB.npy')
 
     aggregate_csv_path_y = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_test.csv')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_LAB.csv')
     aggregate_npy_path_y = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_test.npy')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_LAB.npy')
 
     # Save the aggregate data as both a npy and csv file
-    np.savetxt(aggregate_csv_path_X, aggregate_npy_X)
+    # np.savetxt(aggregate_csv_path_X, aggregate_npy_X)
     np.save(aggregate_npy_path_X, aggregate_npy_X)
 
-    np.savetxt(aggregate_csv_path_y, aggregate_npy_y)
+    # np.savetxt(aggregate_csv_path_y, aggregate_npy_y)
     np.save(aggregate_npy_path_y, aggregate_npy_y)
 
 

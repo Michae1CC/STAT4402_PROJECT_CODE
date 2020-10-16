@@ -55,12 +55,12 @@ def create_mass_spec_df(mass_spec_path, x_max_bin=501):
 
 
 def main():
-    MASS_SPEC_PATH = os.path.join('data', 'mass_test')
+    MASS_SPEC_PATH = os.path.join('data', 'mass_LAB')
     mass_spec_df = create_mass_spec_df(MASS_SPEC_PATH)
     pprint(mass_spec_df)
 
     # Construct the output path for the dataframe
-    DF_PATH = os.path.join('data', 'MASS_SPEC_DF_test.pkl')
+    DF_PATH = os.path.join('data', 'MASS_SPEC_DF_LAB.pkl')
 
     # Pickle the dataframe
     mass_spec_df.to_pickle(DF_PATH)

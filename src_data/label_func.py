@@ -123,8 +123,8 @@ def detect_func_grps(inchi):
 
 
 def main():
-    INCHI_PATH = os.path.join('data', 'inchi.txt')
-    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC_test.csv')
+    INCHI_PATH = os.path.join('data', 'inchi_LAB.txt')
+    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC_LAB.csv')
     create_cas_functional(SAVE_PATH, inchi_path=INCHI_PATH)
 
 
