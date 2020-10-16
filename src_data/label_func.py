@@ -28,6 +28,7 @@ FUNC_GROUPS = [
     "Alkyl_halide".replace(" ", "_").lower(),
     "Acyl_Halide".replace(" ", "_").lower(),
     "Ether".replace(" ", "_").lower(),
+    "Nitro".replace(" ", "_").lower(),
     "Methyl".replace(" ", "_").lower(),
     "Alkane".replace(" ", "_").lower(),
 ]
@@ -57,6 +58,7 @@ FUNC_SMARTS = [
     # These are subgroups of Alkane^a
     # r'[CH3X4]',  # Methyl^b
     # r'[CX4;H0,H1,H2]',  # Alkane^b
+    # r'[CX3H1](=O)[#6]',  # Aldehyde
 ]
 
 # Convert all the functional smart string to rdkit molecule classes and pair with

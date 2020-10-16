@@ -3,7 +3,7 @@ import os
 import numpy as np
 
 
-def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: str = 'IR_MS_FUNCTIONAL_y.npy', train_size: float = None, test_size: float = 0.25):
+def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: str = 'IR_MS_FUNCTIONAL_y.npy', train_size: float = None, test_size: float = None):
     """
     Demonstrates an example of loading the data for the project. The
     features vectors for the samples are stored in IR_MS_FUNCTIONAL_X.npy
@@ -38,10 +38,16 @@ def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: 
             either be a csv of numpy binary file.
 
         train_size (float):
-            The ratio of data to include in the training set.
+            The ratio of data to include in the training set. By default
+            0.75 samples are dedicated to the training set. 
 
         test_size (float):
-            The ratio of data to include in the testing set.
+            The ratio of data to include in the testing set. By default
+            0.25 samples are dedicated to the testing set. 
+
+    Return:
+        Returns the tuple
+            x_train, x_test, y_train, y_test
 
         NOTE:
             If both train_size and test_size are specified then they will be
@@ -50,8 +56,11 @@ def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: 
             the training set and 2 / 5 will be dedicated to the testing set.
     """
 
-    if train_size < 0 or test_size < 0:
-        raise ValueError("test_size and train_size must be positive values.")
+    if train_size is not None and train_size < 0:
+        raise ValueError("train_size must be positive values.")
+
+    if test_size is not None and test_size < 0:
+        raise ValueError("test_size must be positive values.")
 
     if (train_size is None and test_size is not None):
         if test_size > 1:
@@ -116,7 +125,7 @@ def main():
 
     IR_MS_FUNCTIONAL_X_train, IR_MS_FUNCTIONAL_X_test, IR_MS_FUNCTIONAL_y_train, IR_MS_FUNCTIONAL_y_test = load_project_data(
         x_data_path, y_data_path,
-        train_size=2, test_size=0.5
+        test_size=0.5
     )
 
     print("Train shapes")
