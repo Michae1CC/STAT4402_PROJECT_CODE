@@ -37,7 +37,7 @@ FUNC_GROUPS = [
 # Some of these patterns were crossed referenced with the following website:
 #   https://www.daylight.com/dayhtml_tutorials/languages/smarts/smarts_examples.html
 FUNC_SMARTS = [
-    r'[CX4]',  # Alkane^a
+    # r'[CX4]',  # Alkane^a
     r'[$([CX2]=[X2])]',  # Alkene
     r'[$([CX2]#C)]',  # Alkyne
     r'[c]',  # Arene
@@ -54,11 +54,11 @@ FUNC_SMARTS = [
     r'[CX4][F,Cl,Br,I]',  # Alkyl halide
     r'[CX3](=[OX1])[F,Cl,Br,I]',  # Acyl Halide
     r'[OD2]([#6])[#6]',  # Ether^b
-    r'[$([NX3](=O)=O),$([NX3+](=O)[O-])][!#8]',  # nitro^b
+    r'[$([NX3](=O)=O),$([NX3+](=O)[O-])][!#8]',  # Nitro^b
     # These are subgroups of Alkane^a
-    # r'[CH3X4]',  # Methyl^b
-    # r'[CX4;H0,H1,H2]',  # Alkane^b
-    # r'[CX3H1](=O)[#6]',  # Aldehyde
+    r'[CH3X4]',  # Methyl^b
+    r'[CX4;H0,H1,H2]',  # Alkane^b
+    r'[CX3H1](=O)[#6]',  # Aldehyde
 ]
 
 # Convert all the functional smart string to rdkit molecule classes and pair with
@@ -88,7 +88,8 @@ def create_cas_functional(save_path, inchi_path=os.path.join('data', 'CAS_func.c
 
         CAS_func_writer.writeheader()
 
-        for line in islice(inchi_reader, 5):
+        # for line in islice(inchi_reader, 5):
+        for line in inchi_reader:
 
             cas_id, inchi = line['cas_id'], line['inchi']
 
@@ -125,8 +126,8 @@ def detect_func_grps(inchi):
 
 
 def main():
-    INCHI_PATH = os.path.join('data', 'inchi_LAB.txt')
-    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC_LAB.csv')
+    INCHI_PATH = os.path.join('data', 'inchi.txt')
+    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC.csv')
     create_cas_functional(SAVE_PATH, inchi_path=INCHI_PATH)
 
 
