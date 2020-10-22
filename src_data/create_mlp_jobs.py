@@ -222,7 +222,7 @@ def main():
                         help='If True the created jobs will be immediately submitted.')
     parser.add_argument('-t', '--temp', type=convert_bool_arg, default=False, const=True, nargs='?',
                         help='If True the created job folder will be deleted immediately after submitting the jobs.')
-    parser.add_argument('-d', '--dry_run', type=convert_bool_arg, default=False, const=True, nargs='?',
+    parser.add_argument('-d', '--dry_run', type=convert_bool_arg, default=False, const=False, nargs='?',
                         help='If True the created job folder will be deleted immediately after submitting the jobs.')
 
     args = parser.parse_args()
