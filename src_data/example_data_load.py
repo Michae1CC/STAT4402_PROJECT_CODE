@@ -47,7 +47,13 @@ def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: 
 
     Return:
         Returns the tuple
-            x_train, x_test, y_train, y_test
+            (x_train, x_test, y_train, y_test)
+
+        NOTE:
+            If no splitting needs to be done just set the train size to 1 and 
+            the test size to None or train size to None and the test size to 1.
+            This will only return the tuple ('X data', 'y data') instead of
+            (x_train, x_test, y_train, y_test).
 
         NOTE:
             If both train_size and test_size are specified then they will be
@@ -86,6 +92,9 @@ def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: 
         raise NotImplementedError(
             f"Don't know how to deal with file type of {y_data_path}")
 
+    if (train_size == 1 and test_size is None) or (test_size == 1 and train_size is None):
+        return IR_MS_FUNCTIONAL_X, IR_MS_FUNCTIONAL_y
+
     train_ratio = None
 
     # Find the test and train ratios
@@ -120,12 +129,12 @@ def main():
     # saved both npy files in the same directory as this example.py file,
     # just remove 'data' as a parameter to os.path.join and just use
     # os.path.join('IR_MS_FUNCTIONAL_X.npy').
-    x_data_path = os.path.join('data', 'IR_MS_FUNCTIONAL_X.npy')
-    y_data_path = os.path.join('data', 'IR_MS_FUNCTIONAL_y.npy')
+    x_data_path = os.path.join('data', 'IR_MS_FUNCTIONAL_X_LAB.npy')
+    y_data_path = os.path.join('data', 'IR_MS_FUNCTIONAL_y_LAB.npy')
 
-    IR_MS_FUNCTIONAL_X_train, IR_MS_FUNCTIONAL_X_test, IR_MS_FUNCTIONAL_y_train, IR_MS_FUNCTIONAL_y_test = load_project_data(
+    IR_MS_FUNCTIONAL_X_train, IR_MS_FUNCTIONAL_y_train = load_project_data(
         x_data_path, y_data_path,
-        test_size=0.5
+        test_size=1
     )
 
     print("Train shapes")
@@ -134,17 +143,17 @@ def main():
 
     print()
 
-    print("Test shapes")
-    print(IR_MS_FUNCTIONAL_X_test.shape)
-    print(IR_MS_FUNCTIONAL_y_test.shape)
+    # print("Test shapes")
+    # print(IR_MS_FUNCTIONAL_X_test.shape)
+    # print(IR_MS_FUNCTIONAL_y_test.shape)
 
-    print()
+    # print()
 
-    print(IR_MS_FUNCTIONAL_X_train[0])
-    print()
+    # print(IR_MS_FUNCTIONAL_X_train[0])
+    # print()
 
-    print(IR_MS_FUNCTIONAL_y_train[0])
-    print()
+    # print(IR_MS_FUNCTIONAL_y_train[0])
+    # print()
 
 
 if __name__ == '__main__':

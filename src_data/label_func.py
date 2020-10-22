@@ -14,7 +14,6 @@ from itertools import islice
 from pprint import pprint
 
 FUNC_GROUPS = [
-    "Alkane".replace(" ", "_").lower(),
     "Alkene".replace(" ", "_").lower(),
     "Alkyne".replace(" ", "_").lower(),
     "Arene".replace(" ", "_").lower(),
@@ -31,6 +30,7 @@ FUNC_GROUPS = [
     "Nitro".replace(" ", "_").lower(),
     "Methyl".replace(" ", "_").lower(),
     "Alkane".replace(" ", "_").lower(),
+    "Aldehyde".replace(" ", "_").lower(),
 ]
 
 # I've given the same order for the functional groups as the paper.
@@ -126,8 +126,8 @@ def detect_func_grps(inchi):
 
 
 def main():
-    INCHI_PATH = os.path.join('data', 'inchi.txt')
-    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC.csv')
+    INCHI_PATH = os.path.join('data', 'inchi_LAB.txt')
+    SAVE_PATH = os.path.join('data', 'CAS_TO_FUNC_LAB.csv')
     create_cas_functional(SAVE_PATH, inchi_path=INCHI_PATH)
 
 
