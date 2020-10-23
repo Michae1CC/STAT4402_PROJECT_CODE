@@ -21,7 +21,7 @@ elif sys.platform.startswith('linux'):\
             '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
 
 
-JOB_TIME = "0-6:00"
+JOB_TIME = "0-3:00"
 JOB_MEM = "16GB"
 JOB_NODES = 1
 JOB_NTASKS_PER_NODE = 1
@@ -168,7 +168,7 @@ class JobCreator:
                     py_ver_short=PYTHON_VERSION.rsplit(".", maxsplit=1)[0],
                     file_name=file_name,
                     python_filepath=os.path.join(
-                        ROOT_DIR, "src_data", "CHANGE_THIS.py"), # TODO changes this !!!!!
+                        ROOT_DIR, "src_model", "cluster_20_10_load_auto.py"),
                     stdout_file=stdout_path,
                     stderr_file=stderr_path,
                     param_str=param_str,
