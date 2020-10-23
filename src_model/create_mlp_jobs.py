@@ -5,6 +5,7 @@ __version__ = ''
 
 import os
 import sys
+import csv
 import glob
 import shutil
 import socket
@@ -29,7 +30,7 @@ JOB_CPUS_PER_TASK = 2
 PYTHON_VERSION = "3.6"
 
 JOB_TEMPLATE = """#!/bin/bash
-#SBATCH --job-name={file_name}_anno
+#SBATCH --job-name={file_name}
 #SBATCH --output={stdout_file}
 #SBATCH --error={stderr_file}
 #SBATCH --time={job_time}
@@ -48,7 +49,7 @@ echo "running with SLURM_TASKS_PER_NODE= $SLURM_TASKS_PER_NODE "
 echo "running with SLURM_NTASKS total  = $SLURM_NTASKS "
 export TIMEFORMAT="%E sec"
 
-python{py_ver_short} -W ignore {python_filepath} --arg1 {arg1}
+python{py_ver_short} -W ignore {python_filepath!r} {param_str}
 
 DATE=$(date +"%Y%m%d%H%M")
 echo "time finished "$DATE
@@ -78,7 +79,7 @@ def convert_bool_arg(arg_in):
 class JobCreator:
     "Creates (and possibly runs) job scripts for creating annotated images."
 
-    def __init__(self, slurm_dir: str, submit: bool = False, temp: bool = False, dry_run: bool = False):
+    def __init__(self, slurm_dir: str, param_csv_path: str, submit: bool = False, temp: bool = False, dry_run: bool = False):
         """
         Initializes a job creator.
 
@@ -100,6 +101,7 @@ class JobCreator:
         """
 
         self.slurm_dir = slurm_dir
+        self.param_csv_path = param_csv_path
 
         self.arg1s = ["hi", "hello"]
 
@@ -144,35 +146,44 @@ class JobCreator:
         Creates a job files for each tile within the project folder.
         """
 
-        for arg1 in self.arg1s:
+        with open(self.param_csv_path, 'r', newline='') as param_csv_file:
 
-            file_name = '_'.join([str(arg1)])
+            # Open the parameters combination file
+            param_reader = csv.DictReader(param_csv_file, delimiter=',')
 
-            stdout_path = os.path.join(
-                self.slurm_out, f"{file_name}_out.txt")
-            stderr_path = os.path.join(
-                self.slurm_err, f"{file_name}_err.txt")
+            for param_id, line_ in enumerate(param_reader, 1):
 
-            FORMATTED_TEMPLATE = JOB_TEMPLATE.format(
-                py_ver_short=PYTHON_VERSION.rsplit(".", maxsplit=1)[0],
-                file_name=file_name,
-                python_filepath=os.path.join(
-                    ROOT_DIR, "src_data", "CHANGE_THIS.py"), # TODO changes this !!!!!
-                stdout_file=stdout_path,
-                stderr_file=stderr_path,
-                arg1=arg1,
-                job_time=JOB_TIME,
-                job_mem=JOB_MEM,
-                job_nodes=JOB_NODES,
-                job_ntasks_per_node=JOB_NTASKS_PER_NODE,
-                job_cpus_per_task=JOB_CPUS_PER_TASK
-            )
+                # Create a string of all the parameter names with their
+                # corresponding parameter values.
+                param_str = ' '.join(f'--{param_name} {param_value}' for param_name,param_value in line_.items())
 
-            job_filename = f"{file_name}_job.sh"
-            job_path = os.path.join(self.output_dir, job_filename)
+                file_name = f"id_{param_id}"
 
-            with open(job_path, "w+") as job_file:
-                print(FORMATTED_TEMPLATE, end='', file=job_file, flush=True)
+                stdout_path = os.path.join(
+                    self.slurm_out, f"{file_name}_out.txt")
+                stderr_path = os.path.join(
+                    self.slurm_err, f"{file_name}_err.txt")
+
+                FORMATTED_TEMPLATE = JOB_TEMPLATE.format(
+                    py_ver_short=PYTHON_VERSION.rsplit(".", maxsplit=1)[0],
+                    file_name=file_name,
+                    python_filepath=os.path.join(
+                        ROOT_DIR, "src_data", "CHANGE_THIS.py"), # TODO changes this !!!!!
+                    stdout_file=stdout_path,
+                    stderr_file=stderr_path,
+                    param_str=param_str,
+                    job_time=JOB_TIME,
+                    job_mem=JOB_MEM,
+                    job_nodes=JOB_NODES,
+                    job_ntasks_per_node=JOB_NTASKS_PER_NODE,
+                    job_cpus_per_task=JOB_CPUS_PER_TASK
+                )
+
+                job_filename = f"{file_name}_job.sh"
+                job_path = os.path.join(self.output_dir, job_filename)
+
+                with open(job_path, "w+") as job_file:
+                    print(FORMATTED_TEMPLATE, end='', file=job_file, flush=True)
 
         return
 
@@ -216,7 +227,9 @@ def main():
                                      "job scripts for creating annotated images.")
 
     parser.add_argument('--slurm_dir', type=str, default=os.path.join(ROOT_DIR, "batch", "mlp_params"),
-                        help='A full path to the tile directory.')
+                        help='A full path to a directory to create slurm and batch files.')
+    parser.add_argument('--param_csv_path', type=str, default=os.path.join(ROOT_DIR, "data", "MLP_Param.csv"),
+                        help='A full path to a files containing all the different parameter settings.')
 
     parser.add_argument('-s', '--submit', type=convert_bool_arg, default=False, const=True, nargs='?',
                         help='If True the created jobs will be immediately submitted.')
@@ -227,7 +240,7 @@ def main():
 
     args = parser.parse_args()
 
-    JobCreator(args.slurm_dir,
+    JobCreator(args.slurm_dir, args.param_csv_path,
                submit=args.submit, temp=args.temp, dry_run=args.dry_run)
 
 

@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 # This needs to be run in an environment with rdkit. I used conda to install
 # this library on a windows machine so the commands:
 #
@@ -5,6 +7,9 @@
 # conda activate my-rdkit-env
 #
 # Must be run beforehand
+
+__author__ = 'Michael Ciccotosto-Camp'
+__version__ = ''
 
 import os
 import csv

@@ -3,9 +3,10 @@ import os
 import numpy as np
 
 
-def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: str = 'IR_MS_FUNCTIONAL_y.npy', train_size: float = None, test_size: float = None):
+def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: str = 'IR_MS_FUNCTIONAL_y.npy',
+                      train_size: float = None, test_size: float = None):
     """
-    Demonstrates an example of loading the data for the project. The
+    A function use to loading the data for the project. The
     features vectors for the samples are stored in IR_MS_FUNCTIONAL_X.npy
     while the correspong labels are stored in IR_MS_FUNCTIONAL_y.npy. Labels
     and feature vectors will share the same index. For example the label for
