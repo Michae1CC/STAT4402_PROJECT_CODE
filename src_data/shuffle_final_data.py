@@ -24,11 +24,11 @@ def load_and_shuffle(x_data_path, y_data_path):
     print(IR_MS_FUNCTIONAL_X.shape)
     print(IR_MS_FUNCTIONAL_y.shape)
 
-    # shuffled_index = np.arange(IR_MS_FUNCTIONAL_X.shape[0])
-    # np.random.shuffle(shuffled_index)
+    shuffled_index = np.arange(IR_MS_FUNCTIONAL_X.shape[0])
+    np.random.shuffle(shuffled_index)
 
-    # IR_MS_FUNCTIONAL_X_shuffle = IR_MS_FUNCTIONAL_X[shuffled_index]
-    # IR_MS_FUNCTIONAL_y_shuffle = IR_MS_FUNCTIONAL_y[shuffled_index]
+    IR_MS_FUNCTIONAL_X_shuffle = IR_MS_FUNCTIONAL_X[shuffled_index]
+    IR_MS_FUNCTIONAL_y_shuffle = IR_MS_FUNCTIONAL_y[shuffled_index]
 
     # print(IR_MS_FUNCTIONAL_X_shuffle)
     # print(IR_MS_FUNCTIONAL_y_shuffle)

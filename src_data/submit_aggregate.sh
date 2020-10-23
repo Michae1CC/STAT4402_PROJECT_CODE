@@ -3,7 +3,7 @@
 #SBATCH --output=/home/s4430291/Courses/STAT4402/STAT4402_PROJECT_CODE/data/batch_out/aggregate_chem_out.txt
 #SBATCH --error=/home/s4430291/Courses/STAT4402/STAT4402_PROJECT_CODE/data/batch_out/aggregate_chem_err.txt
 #SBATCH --time=1-0:00
-#SBATCH --mem=30GB
+#SBATCH --mem=25GB
 #SBATCH --nodes=1
 #SBATCH --cpus-per-task=2
 

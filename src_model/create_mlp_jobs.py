@@ -151,7 +151,7 @@ class JobCreator:
             # Open the parameters combination file
             param_reader = csv.DictReader(param_csv_file, delimiter=',')
 
-            for param_id, line_ in enumerate(param_reader, 1):
+            for param_id, line_ in enumerate(param_reader, 2):
 
                 # Create a string of all the parameter names with their
                 # corresponding parameter values.
@@ -224,7 +224,7 @@ class JobCreator:
 def main():
 
     parser = argparse.ArgumentParser(description="Creates (and possibly runs) "
-                                     "job scripts for creating annotated images.")
+                                     "job scripts for MLP parameter tunning.")
 
     parser.add_argument('--slurm_dir', type=str, default=os.path.join(ROOT_DIR, "batch", "mlp_params"),
                         help='A full path to a directory to create slurm and batch files.')

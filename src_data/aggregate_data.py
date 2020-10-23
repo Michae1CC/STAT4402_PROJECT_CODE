@@ -70,34 +70,49 @@ def main():
         PROJECT_DIR = os.path.join(
             '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
 
-    ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_LAB.csv')
+    # Lab data paths
+    # ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_LAB.csv')
+    # mass_spec_data_path = os.path.join(
+    #     PROJECT_DIR, 'data', 'MASS_SPEC_DF_LAB.pkl')
+    # cas_to_func_path = os.path.join(
+    #     PROJECT_DIR, 'data', 'CAS_TO_FUNC_LAB.csv')
+
+    # Pubchem data paths
+    ir_data_path = os.path.join(PROJECT_DIR, 'data', 'IR_bins_FINAL.csv')
     mass_spec_data_path = os.path.join(
-        PROJECT_DIR, 'data', 'MASS_SPEC_DF_LAB.pkl')
+        PROJECT_DIR, 'data', 'MASS_SPEC_DF.csv')
     cas_to_func_path = os.path.join(
-        PROJECT_DIR, 'data', 'CAS_TO_FUNC_LAB.csv')
+        PROJECT_DIR, 'data', 'CAS_TO_FUNC.csv')
 
     aggregate_npy_X, aggregate_npy_y = create_aggregate(
         ir_data_path, mass_spec_data_path, cas_to_func_path)
 
-    print(aggregate_npy_X.shape)
-    print(aggregate_npy_y.shape)
+    # Shuffle the data before saving
+    shuffled_index = np.arange(aggregate_npy_X.shape[0])
+    np.random.shuffle(shuffled_index)
+
+    aggregate_npy_X_shuffle = aggregate_npy_X[shuffled_index]
+    aggregate_npy_y_shuffle = aggregate_npy_y[shuffled_index]
+
+    print(aggregate_npy_X_shuffle.shape)
+    print(aggregate_npy_y_shuffle.shape)
 
     aggregate_csv_path_X = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_LAB.csv')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X.csv')
     aggregate_npy_path_X = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X_LAB.npy')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_X.npy')
 
     aggregate_csv_path_y = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_LAB.csv')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y.csv')
     aggregate_npy_path_y = os.path.join(
-        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y_LAB.npy')
+        PROJECT_DIR, 'data', 'IR_MS_FUNCTIONAL_y.npy')
 
     # Save the aggregate data as both a npy and csv file
-    # np.savetxt(aggregate_csv_path_X, aggregate_npy_X)
-    np.save(aggregate_npy_path_X, aggregate_npy_X)
+    np.savetxt(aggregate_csv_path_X, aggregate_npy_X_shuffle)
+    np.save(aggregate_npy_path_X, aggregate_npy_X_shuffle)
 
-    # np.savetxt(aggregate_csv_path_y, aggregate_npy_y)
-    np.save(aggregate_npy_path_y, aggregate_npy_y)
+    np.savetxt(aggregate_csv_path_y, aggregate_npy_y_shuffle)
+    np.save(aggregate_npy_path_y, aggregate_npy_y_shuffle)
 
 
 if __name__ == '__main__':
