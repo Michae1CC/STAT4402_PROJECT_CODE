@@ -6,7 +6,6 @@ __version__ = ''
 import os
 import sys
 import csv
-import glob
 import shutil
 import socket
 import itertools

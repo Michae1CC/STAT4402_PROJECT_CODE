@@ -110,6 +110,17 @@ auto_batch_size = args.auto_batch_size
 ms_latent_dim = round(MS_ratio * latent_dim)
 ir_latent_dim = latent_dim - ms_latent_dim
 
+print("\n\n")
+print("--------------------------------")
+print("PARAMETERS:")
+print("latent_dim:", latent_dim)
+print("MS_ratio:", MS_ratio)
+print("auto_lr:", auto_lr)
+print("auto_epoch_num:", auto_epoch_num)
+print("auto_batch_size:", auto_batch_size)
+print("--------------------------------")
+print("\n\n", flush=True)
+
 
 def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: str = 'IR_MS_FUNCTIONAL_y.npy', train_size: float = None, test_size: float = None):
     """
