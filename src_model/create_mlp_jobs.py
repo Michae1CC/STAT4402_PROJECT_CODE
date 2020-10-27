@@ -14,11 +14,11 @@ import argparse
 
 if sys.platform.startswith('win32'):
     ROOT_DIR = os.path.join(
-            'D:\\', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
-elif sys.platform.startswith('linux'):\
-    
+        'D:\\', '2020', 'S2', 'STAT_4402', 'ASSESSMENT', 'STAT4402_PROJECT_CODE')
+
+elif sys.platform.startswith('linux'):
     ROOT_DIR = os.path.join(
-            '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
+        '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
 
 
 JOB_TIME = "0-6:00"
@@ -155,7 +155,8 @@ class JobCreator:
 
                 # Create a string of all the parameter names with their
                 # corresponding parameter values.
-                param_str = ' '.join(f'--{param_name} {param_value}' for param_name,param_value in line_.items())
+                param_str = ' '.join(
+                    f'--{param_name} {param_value}' for param_name, param_value in line_.items())
 
                 file_name = f"id_{param_id}"
 
@@ -168,7 +169,7 @@ class JobCreator:
                     py_ver_short=PYTHON_VERSION.rsplit(".", maxsplit=1)[0],
                     file_name=file_name,
                     python_filepath=os.path.join(
-                        ROOT_DIR, "src_data", "CHANGE_THIS.py"), # TODO changes this !!!!!
+                        ROOT_DIR, "src_data", "CHANGE_THIS.py"),  # TODO changes this !!!!!
                     stdout_file=stdout_path,
                     stderr_file=stderr_path,
                     param_str=param_str,
@@ -183,7 +184,8 @@ class JobCreator:
                 job_path = os.path.join(self.output_dir, job_filename)
 
                 with open(job_path, "w+") as job_file:
-                    print(FORMATTED_TEMPLATE, end='', file=job_file, flush=True)
+                    print(FORMATTED_TEMPLATE, end='',
+                          file=job_file, flush=True)
 
         return
 
@@ -203,7 +205,7 @@ class JobCreator:
 
         # Submit each of the jobs within the job file list
         for job_file in job_file_list:
-            
+
             if self.dry_run:
                 print(f"[DRY RUN] sbatch {job_file}")
             else:
