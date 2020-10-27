@@ -101,6 +101,7 @@ print("Unit3Layers:", Unit3Layers)
 print("--------------------------------")
 print("\n\n", flush=True)
 
+
 def load_project_data(x_data_path: str = 'IR_MS_FUNCTIONAL_X.npy', y_data_path: str = 'IR_MS_FUNCTIONAL_y.npy',
                       train_size: float = None, test_size: float = None):
 
@@ -377,7 +378,7 @@ def metric_func(
                                       average='samples', zero_division=0))
 
 
-print("Train data meterics:")
+print("\n\nTRAIN data meterics:")
 # Train data metric
 metric_func(Y_scores, Y_true, X)
 
@@ -387,7 +388,7 @@ Y_true_test = Y_test.detach().numpy()
 Y_scores_test = [network(X_test[i]).detach().numpy()
                  for i in range(len(X_test))]
 
-print("Train data meterics:")
+print("\n\nTEST data meterics:")
 # Test data metric
 metric_func(Y_scores_test, Y_true_test, X_test)
 print("", flush=True)
