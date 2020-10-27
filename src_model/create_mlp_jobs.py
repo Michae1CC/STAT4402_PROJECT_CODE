@@ -21,7 +21,7 @@ elif sys.platform.startswith('linux'):
         '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
 
 
-JOB_TIME = "0-6:00"
+JOB_TIME = "0-3:00"
 JOB_MEM = "16GB"
 JOB_NODES = 1
 JOB_NTASKS_PER_NODE = 1
@@ -169,7 +169,7 @@ class JobCreator:
                     py_ver_short=PYTHON_VERSION.rsplit(".", maxsplit=1)[0],
                     file_name=file_name,
                     python_filepath=os.path.join(
-                        ROOT_DIR, "src_data", "CHANGE_THIS.py"),  # TODO changes this !!!!!
+                        ROOT_DIR, "src_model", "cluster_auto_params.py"),
                     stdout_file=stdout_path,
                     stderr_file=stderr_path,
                     param_str=param_str,
@@ -228,9 +228,9 @@ def main():
     parser = argparse.ArgumentParser(description="Creates (and possibly runs) "
                                      "job scripts for MLP parameter tunning.")
 
-    parser.add_argument('--slurm_dir', type=str, default=os.path.join(ROOT_DIR, "batch", "mlp_params"),
+    parser.add_argument('--slurm_dir', type=str, default=os.path.join(ROOT_DIR, "batch", "auto_params"),
                         help='A full path to a directory to create slurm and batch files.')
-    parser.add_argument('--param_csv_path', type=str, default=os.path.join(ROOT_DIR, "data", "MLP_Param.csv"),
+    parser.add_argument('--param_csv_path', type=str, default=os.path.join(ROOT_DIR, "data", "auto_param.csv"),
                         help='A full path to a files containing all the different parameter settings.')
 
     parser.add_argument('-s', '--submit', type=convert_bool_arg, default=False, const=True, nargs='?',

@@ -71,7 +71,7 @@ parser.add_argument('--auto_lr', type=float, default=0.0001,
                     help='Learning rate or auto encoder.')
 parser.add_argument('--auto_epoch_num', type=int, default=100,
                     help='The number of epochs to use.')
-parser.add_argument('--batch_size', type=int, default=50,
+parser.add_argument('--auto_batch_size', type=int, default=50,
                     help='The batch size to use.')
 
 parser.add_argument('--lr', type=float, default=0.0001,
@@ -92,9 +92,8 @@ parser.add_argument('--unit_3_layers', type=int, default=250,
 args = parser.parse_args()
 
 lr = 0.0005
-# auto_epoch_num = 100
-auto_epoch_num = 10
-epoch_num = 250
+# epoch_num = 250
+epoch_num = 20
 batch_size = 100
 HiddenLayer2Bool = True
 Unit1Layers = 400
@@ -104,8 +103,9 @@ Unit3Layers = 0
 latent_dim = args.latent_dim
 MS_ratio = args.MS_ratio
 auto_lr = args.auto_lr
-auto_epoch_num = args.auto_epoch_num
-batch_size = args.batch_size
+# auto_epoch_num = args.auto_epoch_num
+auto_epoch_num = 10
+auto_batch_size = args.auto_batch_size
 
 ms_latent_dim = round(MS_ratio * latent_dim)
 ir_latent_dim = latent_dim - ms_latent_dim
@@ -337,7 +337,7 @@ IR_loss = []
 def ae_train_IR(X_IR=X_IR,
                 loss_function=nn.MSELoss(),
                 epoch_num=auto_epoch_num,
-                batch_size=batch_size,
+                batch_size=auto_batch_size,
                 lr=auto_lr):
 
     X_in, X_out = torch.tensor(X_IR, dtype=torch.float), torch.tensor(
@@ -390,7 +390,7 @@ MS_loss = []
 def ae_train_MS(X_MS=X_MS,
                 loss_function=nn.MSELoss(),
                 epoch_num=auto_epoch_num,
-                batch_size=batch_size,
+                batch_size=auto_batch_size,
                 lr=auto_lr):
 
     X_in, X_out = torch.tensor(X_MS, dtype=torch.float), torch.tensor(
@@ -596,6 +596,7 @@ def metric_func(
                                       average='samples', zero_division=0))
 
 
+print("\n\nTRAIN data meterics:")
 # Train data metric
 metric_func(Y_scores, Y_true, X)
 
@@ -616,5 +617,7 @@ Y_true_test = Y_test.detach().numpy()
 Y_scores_test = [network(X_test[i]).detach().numpy()
                  for i in range(len(X_test))]
 
+print("\n\nTEST data meterics:")
 # Test data metric
 metric_func(Y_scores_test, Y_true_test, X_test)
+print("", flush=True)
