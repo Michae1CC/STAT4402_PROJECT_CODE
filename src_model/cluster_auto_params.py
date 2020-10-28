@@ -100,12 +100,12 @@ Unit1Layers = 400
 Unit2Layers = 250
 Unit3Layers = 0
 
-latent_dim = args.latent_dim
-MS_ratio = args.MS_ratio
-auto_lr = args.auto_lr
-# auto_epoch_num = args.auto_epoch_num
-auto_epoch_num = 10
-auto_batch_size = args.auto_batch_size
+# best test perfection 576, 896, 451, 596
+latent_dim = 600
+MS_ratio = 0.2
+auto_lr = 0.0001
+auto_epoch_num = 200
+auto_batch_size = 50
 
 ms_latent_dim = round(MS_ratio * latent_dim)
 ir_latent_dim = latent_dim - ms_latent_dim
