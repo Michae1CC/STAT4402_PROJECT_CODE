@@ -92,8 +92,8 @@ parser.add_argument('--unit_3_layers', type=int, default=250,
 args = parser.parse_args()
 
 lr = 0.0005
-# epoch_num = 250
-epoch_num = 20
+epoch_num = 250
+# epoch_num = 20
 batch_size = 100
 HiddenLayer2Bool = True
 Unit1Layers = 400
@@ -103,8 +103,8 @@ Unit3Layers = 0
 latent_dim = args.latent_dim
 MS_ratio = args.MS_ratio
 auto_lr = args.auto_lr
-# auto_epoch_num = args.auto_epoch_num
-auto_epoch_num = 10
+auto_epoch_num = args.auto_epoch_num
+# auto_epoch_num = 10
 auto_batch_size = args.auto_batch_size
 
 ms_latent_dim = round(MS_ratio * latent_dim)
