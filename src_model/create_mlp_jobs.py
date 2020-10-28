@@ -20,7 +20,7 @@ elif sys.platform.startswith('linux'):
         '/', 'home', 's4430291', 'Courses', 'STAT4402', 'STAT4402_PROJECT_CODE')
 
 
-JOB_TIME = "0-3:00"
+JOB_TIME = "0-6:00"
 JOB_MEM = "16GB"
 JOB_NODES = 1
 JOB_NTASKS_PER_NODE = 1

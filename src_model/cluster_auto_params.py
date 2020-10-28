@@ -24,6 +24,9 @@ import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
+
+from pprint import pprint
+
 from scipy import optimize
 from sklearn.metrics import (accuracy_score, average_precision_score, f1_score,
                              precision_recall_curve)
@@ -92,20 +95,20 @@ parser.add_argument('--unit_3_layers', type=int, default=250,
 args = parser.parse_args()
 
 lr = 0.0005
-# epoch_num = 250
-epoch_num = 20
+epoch_num = 250
+# epoch_num = 20
 batch_size = 100
 HiddenLayer2Bool = True
 Unit1Layers = 400
 Unit2Layers = 250
 Unit3Layers = 0
 
-# best test perfection 576, 896, 451, 596
-latent_dim = 600
-MS_ratio = 0.2
-auto_lr = 0.0001
-auto_epoch_num = 200
-auto_batch_size = 50
+latent_dim = args.latent_dim
+MS_ratio = args.MS_ratio
+auto_lr = args.auto_lr
+auto_epoch_num = args.auto_epoch_num
+# auto_epoch_num = 10
+auto_batch_size = args.auto_batch_size
 
 ms_latent_dim = round(MS_ratio * latent_dim)
 ir_latent_dim = latent_dim - ms_latent_dim
@@ -631,4 +634,7 @@ Y_scores_test = [network(X_test[i]).detach().numpy()
 print("\n\nTEST data meterics:")
 # Test data metric
 metric_func(Y_scores_test, Y_true_test, X_test)
+
+pprint(optimal_thres_f1)
+
 print("", flush=True)
