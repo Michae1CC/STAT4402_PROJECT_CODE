@@ -32,6 +32,8 @@ def shift_all_MS():
     ms_data_path = os.path.join('data', 'MASS_SPEC_DF.csv')
     ms_df = pd.read_csv(ms_data_path)
 
+    shifted_dict = {}
+
     # Get all the CAS IDs
     CAS_IDS = ms_df.columns[1:2]
 
@@ -39,6 +41,8 @@ def shift_all_MS():
 
         original_ms = ms_df[cas_id]
         shifted_MS = get_shifted_MS(ms_df, cas_id)
+
+        shifted_dict[cas_id] = shifted_MS
 
         """
         plt.plot(range(len(original_ms)), original_ms, color='blue')
@@ -67,6 +71,8 @@ def shift_all_MS():
         plt.title('MS spec for ' + cas_id)
         plt.show()
         """
+
+    pprint(shifted_dict)
 
 
 def main():
