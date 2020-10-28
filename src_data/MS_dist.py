@@ -30,43 +30,18 @@ def get_shifted_MS(ms_df, CAS_ID):
 
 def shift_all_MS():
     ms_data_path = os.path.join('data', 'MASS_SPEC_DF.csv')
-    molecule_df = pd.read_csv(ms_data_path)
+    ms_df = pd.read_csv(ms_data_path)
 
     # Get all the CAS IDs
-    CAS_IDS = molecule_df.columns[1:2]
-    print(molecule_df.columns[1:])
+    CAS_IDS = ms_df.columns[1:2]
 
-    CAS_ID = molecule_df.columns[1:2][0]
+    for cas_id in CAS_IDS:
 
-    bins = molecule_df.index
-    ms_spec_data = np.array(molecule_df[CAS_ID])
+        original_ms = ms_df[cas_id]
+        shifted_MS = get_shifted_MS(ms_df, cas_id)
 
-    print(ms_spec_data)
-
-    """
-    plt.plot(range(len(ir_spec_data)), ir_spec_data, color='blue')
-    plt.xticks(rotation=-20)
-    plt.tick_params(
-        axis='x',          # changes apply to the x-axis
-        which='both',      # both major and minor ticks are affected
-        bottom=False,      # ticks along the bottom edge are off
-        top=False,         # ticks along the top edge are off
-        labelbottom=False)  # labels along the bottom edge are off
-    plt.xlabel("m/z")
-    plt.ylabel("Relative Intensity")
-    plt.title('MS spec for ' + CAS_ID)
-    plt.show()
-    """
-
-    """
-    for CAS_ID in ['103822']:
-
-        print(CAS_ID)
-
-        bins = molecule_df.index
-        ir_spec_data = molecule_df[CAS_ID]
-
-        plt.plot(range(len(ir_spec_data)), ir_spec_data, color='blue')
+        """
+        plt.plot(range(len(original_ms)), original_ms, color='blue')
         plt.xticks(rotation=-20)
         plt.tick_params(
             axis='x',          # changes apply to the x-axis
@@ -76,22 +51,27 @@ def shift_all_MS():
             labelbottom=False)  # labels along the bottom edge are off
         plt.xlabel("m/z")
         plt.ylabel("Relative Intensity")
-        plt.title('MS spec for ' + CAS_ID)
+        plt.title('MS spec for ' + cas_id)
         plt.show()
-    """
+
+        plt.plot(range(len(shifted_MS)), shifted_MS, color='blue')
+        plt.xticks(rotation=-20)
+        plt.tick_params(
+            axis='x',          # changes apply to the x-axis
+            which='both',      # both major and minor ticks are affected
+            bottom=False,      # ticks along the bottom edge are off
+            top=False,         # ticks along the top edge are off
+            labelbottom=False)  # labels along the bottom edge are off
+        plt.xlabel("m/z")
+        plt.ylabel("Relative Intensity")
+        plt.title('MS spec for ' + cas_id)
+        plt.show()
+        """
 
 
-mock_ms = np.array([0, 1, 0.5, 0, 2, 5, 0, 3, 0, 0.7, 0, 0, 0, 1, 0, 0])
-print(mock_ms)
+def main():
+    shift_all_MS()
 
-# Get the maximum array index
-max_index = np.argmax(mock_ms)
-index_offset_tups = list((abs(max_index - index), value)
-                         for index, value in enumerate(mock_ms))
-index_offset_tups = sorted(index_offset_tups)
-pprint(index_offset_tups)
 
-_, shifted_MS = zip(*index_offset_tups)
-
-shifted_MS = np.array(shifted_MS)
-pprint(shifted_MS)
+if __name__ == '__main__':
+    main()
