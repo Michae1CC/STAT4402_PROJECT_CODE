@@ -7,7 +7,27 @@ from pprint import pprint
 from jcamp import JCAMP_reader
 
 
-def create_mass_spec_df(mass_spec_path, x_max_bin=501):
+def shift_ms_data(x_values, jcamp_dict):
+    """
+    Shifts the mass spec data by subtracting by the mass of the molecule.
+    """
+
+    try:
+        # Get the molar mass
+        molar_mass = round(float(jcamp_dict['mw']))
+
+    except Exception:
+        pprint(jcamp_dict)
+        exit(1)
+
+    x_values = molar_mass - x_values
+
+    x_values[x_values < 0] = 0
+
+    return x_values
+
+
+def create_mass_spec_df(mass_spec_path, x_max_bin=501, mass_shift=False):
     """
     Creates a new data frame for mass spec data.
 
@@ -39,10 +59,13 @@ def create_mass_spec_df(mass_spec_path, x_max_bin=501):
         x_values = jcamp_dict['x'] * float(jcamp_dict['xfactor'])
         y_values = jcamp_dict['y'] * float(jcamp_dict['yfactor'])
 
+        cas_idx = jcamp_dict['cas registry no'].replace('-', '')
+
+        if mass_shift:
+            x_values = shift_ms_data(x_values, jcamp_dict)
+
         # Scale by largest y val
         y_values = y_values / max(y_values)
-
-        cas_idx = jcamp_dict['cas registry no'].replace('-', '')
 
         # Construct a temporary df for the molecule to store its x and y values
         single_df = pd.DataFrame({'x': x_values, cas_idx: y_values})
@@ -55,15 +78,15 @@ def create_mass_spec_df(mass_spec_path, x_max_bin=501):
 
 
 def main():
-    MASS_SPEC_PATH = os.path.join('data', 'mass_LAB')
-    mass_spec_df = create_mass_spec_df(MASS_SPEC_PATH)
-    pprint(mass_spec_df)
+    MASS_SPEC_PATH = os.path.join('data', 'mass')
+    mass_spec_df = create_mass_spec_df(MASS_SPEC_PATH, mass_shift=True)
+    # pprint(mass_spec_df)
 
     # Construct the output path for the dataframe
-    DF_PATH = os.path.join('data', 'MASS_SPEC_DF_LAB.pkl')
+    DF_PATH = os.path.join('data', 'MASS_SPEC_DF_SHIFT.csv')
 
     # Pickle the dataframe
-    mass_spec_df.to_pickle(DF_PATH)
+    mass_spec_df.to_csv(DF_PATH)
 
 
 if __name__ == '__main__':

@@ -18,15 +18,14 @@ import itertools
 import os
 import socket
 import sys
+from pprint import pprint
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
-from pprint import pprint
-
 from scipy import optimize
 from sklearn.metrics import (accuracy_score, average_precision_score, f1_score,
                              precision_recall_curve)
@@ -107,6 +106,7 @@ latent_dim = 500
 MS_ratio = 0.15
 auto_lr = 0.0001
 auto_epoch_num = 250
+# auto_epoch_num = 10
 auto_batch_size = 20
 
 ms_latent_dim = round(MS_ratio * latent_dim)
@@ -456,57 +456,21 @@ def ae_train_MS(X_MS=X_MS,
 
 trained_autoencoder_MS = ae_train_MS()
 
-MLP_loss = []
+plt.plot(range(len(IR_loss)), IR_loss, color='red')
+plt.xticks(range(1, 250, 25))
+# plt.xticks(range(1, 10, 2))
+plt.title('IR loss')
+plt.xlabel('Epoch num')
+plt.ylabel('Loss')
+plt.show()
 
-
-def train(X,
-          Y=Y,
-          loss_function=nn.BCELoss(),
-          epoch_num=epoch_num,
-          batch_size=batch_size,
-          lr=lr,
-          HiddenLayer2Bool=HiddenLayer2Bool):
-
-    X, Y = torch.tensor(X, dtype=torch.float), torch.tensor(
-        Y, dtype=torch.float)
-
-    if HiddenLayer2Bool:
-        network = Net2()
-    else:
-        network = Net3()
-
-    data_tuple = [[X[i], Y[i]] for i in range(len(X))]  # accuracy
-
-    batch = torch.utils.data.DataLoader(data_tuple,
-                                        batch_size=batch_size,
-                                        shuffle=True)
-
-    optimizer = optim.Adam(network.parameters(),
-                           lr=lr,
-                           betas=(0.9, 0.999))
-
-    for epoch in range(epoch_num):
-
-        running_loss = 0
-
-        for batch_shuffle in batch:
-
-            x, y = batch_shuffle
-
-            # Give loss
-            optimizer.zero_grad()
-            loss = loss_function(network(x), y)
-            loss.backward()
-            optimizer.step()
-
-            running_loss += loss.item()
-
-        print("Iteration: ", epoch + 1,
-              ". Running loss: ", running_loss/batch_size)
-
-        MLP_loss.append(running_loss/batch_size)
-
-    return network
+plt.plot(range(len(MS_loss)), MS_loss, color='red')
+plt.xticks(range(1, 250, 25))
+# plt.xticks(range(1, 10, 2))
+plt.title('MS loss')
+plt.xlabel('Epoch num')
+plt.ylabel('Loss')
+plt.show()
 
 
 # make the X_IR and X_MS data into tensors
@@ -514,8 +478,6 @@ X_IR = torch.tensor(X_IR, dtype=torch.float)
 X_MS = torch.tensor(X_MS, dtype=torch.float)
 print(X_IR.shape)
 print(X_MS.shape)
-X_cat = torch.cat((X_IR, X_MS), 1)
-X_cat.shape
 
 # Now set both trained models to evaluation mode
 trained_autoencoder_IR.eval()
@@ -523,134 +485,30 @@ trained_autoencoder_MS.eval()
 # then extract all the relevant latent variables
 _, latentIR = trained_autoencoder_IR(X_IR)
 _, latentMS = trained_autoencoder_MS(X_MS)
-# combine both of these to create one feature vector of the new latent variables
-latent_all = torch.cat((latentIR, latentMS), 1)
-latent_all.shape
 
-# train the MLP using the latent variables
-ae_mlp_network = train(X=latent_all)
+print(latentIR)
+print(latentMS)
 
-# Allow evaluation
-network = ae_mlp_network
-network.eval()
-X = latent_all
+# Output
+# tensor([[0.0000, 0.0000, 0.0000,  ..., 4.2484, 0.0000, 3.1995],
+#         [0.0000, 0.0000, 0.0000,  ..., 4.7063, 1.9494, 4.4030],
+#         [0.0000, 0.0000, 0.0000,  ..., 3.0064, 0.8994, 3.8430],
+#         ...,
+#         [0.0000, 0.0000, 0.0000,  ..., 4.0519, 2.3918, 4.8649],
+#         [0.0000, 0.0000, 0.0000,  ..., 3.9312, 0.0000, 3.4246],
+#         [0.0000, 0.0000, 0.0000,  ..., 4.7969, 0.0000, 2.6690]],
+#        grad_fn=<ThresholdBackward0>)
+# tensor([[0.6913, 0.5226, 0.9594,  ..., 0.9334, 1.5631, 2.2870],
+#         [1.4517, 0.7098, 1.9138,  ..., 0.3664, 0.5262, 1.1027],
+#         [0.8563, 0.7442, 0.4209,  ..., 0.6453, 0.9657, 1.1197],
+#         ...,
+#         [0.4288, 0.1757, 0.3872,  ..., 1.2728, 0.4513, 0.8716],
+#         [1.8710, 0.5198, 1.8540,  ..., 0.7951, 0.8720, 1.3662],
+#         [0.4088, 1.0626, 1.2652,  ..., 1.5501, 0.8697, 1.0284]],
+#        grad_fn=<ThresholdBackward0>)
 
-X, Y = torch.tensor(X, dtype=torch.float), torch.tensor(Y, dtype=torch.float)
+IR_save_path = os.path.join(PROJECT_DIR, 'data', 'IR_network_dict.pkl')
+MS_save_path = os.path.join(PROJECT_DIR, 'data', 'MS_network_dict.pkl')
 
-# Get data for evaluating
-Y_true = Y.detach().numpy()
-Y_scores = [network(X[i]).detach().numpy() for i in range(len(X))]
-
-# Molecular perfection/ Accuracy Functions
-
-
-def perfect_acc(cutoff, X=X, Y_scores=Y_scores, Y_true=Y_true, lambda_=0):
-    # The lambda is a regularization parameter for the threshold, this will
-    # punish the optimizer for choosing thresholds far away from 0.5.
-
-    # NOTE that regularization is turned off by default
-    return -sum([np.array_equal(np.array(Y_scores[i] > cutoff, dtype=int),
-                                Y_true[i]) for i in range(len(X))]) / len(X) + lambda_ * np.linalg.norm(cutoff - 0.5)
-
-
-def perfect_acc_sep(cutoff, func_group=0, X=X, Y_scores=Y_scores, Y_true=Y_true, lambda_=0):
-    # The lambda is a regularization parameter for the threshold, this will
-    # punish the optimizer for choosing thresholds far away from 0.5.
-
-    # NOTE that regularization is turned off by default
-    return -sum([np.array_equal(np.array(Y_scores[i][func_group] > cutoff, dtype=int),
-                                Y_true[i][func_group]) for i in range(len(X))]) / len(X) + lambda_ * np.linalg.norm(cutoff - 0.5)
-
-
-# Optimal threshold for accuracy of each functional group
-optimal_thres_perf = [optimize.fminbound(perfect_acc_sep, 0.0, 0.95, args=(
-    func_grp, Y_scores, Y_true)) for func_grp in range(len(Y_scores[0]))]
-
-# F1 score Functions
-
-
-def f1_sep(func_group=0, eps=1e-7, Y_scores=Y_scores, Y_true=Y_true):
-    pre, rec, thre = precision_recall_curve(Y_true[:, func_group],
-                                            [Y_scores[i][func_group]
-                                             for i in range(np.shape(Y_scores)[0])])
-    f1 = 2*pre*rec/(pre+rec+eps)
-    max_ind = np.argmax(f1)
-    thresholds = thre[max_ind]
-    return thresholds, f1[max_ind]
-
-
-# Optimal threshold for f1 score
-optimal_thres_f1 = [f1_sep(func_grp)[0]
-                    for func_grp in range(len(Y_scores[0]))]
-
-FUNC_GROUPS = [
-    "Alkene".replace(" ", "_").lower(),
-    "Alkyne".replace(" ", "_").lower(),
-    "Arene".replace(" ", "_").lower(),
-    "Ketone".replace(" ", "_").lower(),
-    "Ester".replace(" ", "_").lower(),
-    "Amide".replace(" ", "_").lower(),
-    "Carboxylic_acid".replace(" ", "_").lower(),
-    "Alcohol".replace(" ", "_").lower(),
-    "Amine".replace(" ", "_").lower(),
-    "Nitrile".replace(" ", "_").lower(),
-    "Alkyl_halide".replace(" ", "_").lower(),
-    "Acyl_Halide".replace(" ", "_").lower(),
-    "Ether".replace(" ", "_").lower(),
-    "Nitro".replace(" ", "_").lower(),
-    "Methyl".replace(" ", "_").lower(),
-    "Alkane".replace(" ", "_").lower(),
-    "Aldehyde".replace(" ", "_").lower(),
-]
-
-# Overall metric function
-
-
-def metric_func(
-        Y_scores,
-        Y_true,
-        X,
-        thres_perf=optimal_thres_f1,
-        thres_f1=optimal_thres_f1):  # optimal_thres_f1
-
-    print("\nAverage Precison Score: ",
-          average_precision_score(Y_true, Y_scores))
-
-    print("\nMolecular Perfection rate: ", -
-          perfect_acc(thres_perf, Y_scores=Y_scores, Y_true=Y_true, X=X))
-
-    print('\nMolecular F1:', f1_score(Y_true,
-                                      [np.array(Y_scores[i] > thres_f1, dtype=int)
-                                       for i in range(len(Y_scores))],
-                                      average='samples', zero_division=0))
-
-
-print("\n\nTRAIN data meterics:")
-# Train data metric
-metric_func(Y_scores, Y_true, X)
-
-# Get test data for evaluating
-X, X_test, Y, Y_test = load_project_data(
-    x_data_path, y_data_path, train_size=0.8)
-X_test = torch.tensor(X_test, dtype=torch.float)
-X_test_IR = X_test[:, :-500]
-X_test_MS = X_test[:, -500:]
-
-_, latent_test_IR = trained_autoencoder_IR(X_test_IR)
-_, latent_test_MS = trained_autoencoder_MS(X_test_MS)
-latent_test = torch.cat((latent_test_IR, latent_test_MS), 1)
-X_test = latent_test
-Y_test = torch.tensor(Y_test, dtype=torch.float)
-
-Y_true_test = Y_test.detach().numpy()
-Y_scores_test = [network(X_test[i]).detach().numpy()
-                 for i in range(len(X_test))]
-
-print("\n\nTEST data meterics:")
-# Test data metric
-metric_func(Y_scores_test, Y_true_test, X_test)
-
-pprint(optimal_thres_f1)
-pprint(optimal_thres_perf)
-
-print("", flush=True)
+torch.save(trained_autoencoder_IR.state_dict(), IR_save_path)
+torch.save(trained_autoencoder_MS.state_dict(), MS_save_path)

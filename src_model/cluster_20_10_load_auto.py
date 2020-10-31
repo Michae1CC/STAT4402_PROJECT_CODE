@@ -306,14 +306,22 @@ Y_scores = [network(X[i]).detach().numpy() for i in range(len(X))]
 # Molecular perfection/ Accuracy Functions
 
 
-def perfect_acc(cutoff, X=X, Y_scores=Y_scores, Y_true=Y_true):
+def perfect_acc(cutoff, X=X, Y_scores=Y_scores, Y_true=Y_true, lambda_=0):
+    # The lambda is a regularization parameter for the threshold, this will
+    # punish the optimizer for choosing thresholds far away from 0.5.
+
+    # NOTE that regularization is turned off by default
     return -sum([np.array_equal(np.array(Y_scores[i] > cutoff, dtype=int),
-                                Y_true[i]) for i in range(len(X))]) / len(X)
+                                Y_true[i]) for i in range(len(X))]) / len(X) + lambda_ * np.linalg.norm(cutoff - 0.5)
 
 
-def perfect_acc_sep(cutoff, func_group=0, X=X, Y_scores=Y_scores, Y_true=Y_true):
+def perfect_acc_sep(cutoff, func_group=0, X=X, Y_scores=Y_scores, Y_true=Y_true, lambda_=0):
+    # The lambda is a regularization parameter for the threshold, this will
+    # punish the optimizer for choosing thresholds far away from 0.5.
+
+    # NOTE that regularization is turned off by default
     return -sum([np.array_equal(np.array(Y_scores[i][func_group] > cutoff, dtype=int),
-                                Y_true[i][func_group]) for i in range(len(X))]) / len(X)
+                                Y_true[i][func_group]) for i in range(len(X))]) / len(X) + lambda_ * np.linalg.norm(cutoff - 0.5)
 
 
 # Optimal threshold for accuracy of each functional group

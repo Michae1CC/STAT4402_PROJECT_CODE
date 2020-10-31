@@ -43,7 +43,7 @@ def get_test_perfection(filepath):
 
 # Get all the files paths from the auto param out directory
 auto_param_out_path = os.path.join(
-    PROJECT_DIR, 'data', 'auto_out', 'batch_out')
+    PROJECT_DIR, 'data', 'auto_out2', 'batch_out')
 
 all_files = glob(os.path.join(auto_param_out_path, "*.txt"))
 
