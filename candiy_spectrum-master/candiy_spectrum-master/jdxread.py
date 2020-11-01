@@ -1,32 +1,32 @@
+#!/usr/bin/env python3
+
+__author__ = 'https://github.com/chopralab/candiy_spectrum'
+
 import os
 from jcamp import JCAMP_reader
 # from scipy import stats
 import numpy as np
-# import matplotlib.pyplot as plt 
-# import pandas as pd 
+# import matplotlib.pyplot as plt
+# import pandas as pd
 import pickle
 from collections import Counter
 import pandas as pd
 
-dc={}
-xu,yu=[],[]
+dc = {}
+xu, yu = [], []
 for root, dirs, files in os.walk('./IR/'):
-	for name in files:
-		# temp_dc={}
-		if name.endswith((".jdx")):
+    for name in files:
+        # temp_dc={}
+        if name.endswith((".jdx")):
 
-			jcamp_dict=JCAMP_reader(root+'/'+name)
-			# xu.append(jcamp_dict['npoints'])
-			dc[name[:-4]]= jcamp_dict
-			# ls.append(jcamp_dict['x'].shape[0])
+            jcamp_dict = JCAMP_reader(root+'/'+name)
+            # xu.append(jcamp_dict['npoints'])
+            dc[name[:-4]] = jcamp_dict
+            # ls.append(jcamp_dict['x'].shape[0])
 # print Counter(xu)
 # del dc['']
 with open('IR.pickle', 'wb') as handle:
     pickle.dump(dc, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
-
-
 
 
 ###################### LAB data####################
@@ -47,5 +47,3 @@ with open('IR.pickle', 'wb') as handle:
 
 # with open('labir.pickle', 'wb') as handle:
 #     pickle.dump(dc, handle, protocol=pickle.HIGHEST_PROTOCOL)
-
-
