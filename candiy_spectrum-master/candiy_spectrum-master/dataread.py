@@ -1,6 +1,12 @@
 #!/usr/bin/env python3
 
-__author__ = 'https://github.com/chopralab/candiy_spectrum'
+"""
+NOTE: This code is not our own work and was heavily adapted off code from github 
+repository of Spectral deep learning for prediction and prospective validation of functional groups.
+
+see: https://github.com/chopralab/candiy_spectrum
+"""
+__author__ = 'Jonathan A. Fine and Anand A. Rajasekar and Krupal P. Jethava and Gaurav Chopra'
 
 import os
 from jcamp import JCAMP_reader
